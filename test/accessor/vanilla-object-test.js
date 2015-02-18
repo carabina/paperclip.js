@@ -171,7 +171,7 @@ describe(__filename + "#", function () {
 
     var v = tpl.view(context);
 
-    expect(stringifyView(v)).to.be("a\u00A0b");
+    expect(stringifyView(v)).to.be("a b");
 
     // woo for vanilla objects!
     context.a = "b";
@@ -180,7 +180,7 @@ describe(__filename + "#", function () {
     accessor.apply();
 
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("b\u00A0c");
+    expect(stringifyView(v)).to.be("b c");
 
   });
 

@@ -5,6 +5,7 @@ var DoctypeExpression          = require("./ast/doctype");
 var RootNodeExpression         = require("./ast/rootNode");
 var TextNodeExpression         = require("./ast/textNode");
 var CommentNodeExpression      = require("./ast/commentNode");
+var CombinedBlockExpression    = require("./ast/combinedBlockBinding");
 var ElementNodeExpression      = require("./ast/elementNode");
 var BlockBindingExpression     = require("./ast/blockBinding");
 var DocTypeExpression          = require("./ast/doctype");
@@ -74,6 +75,19 @@ function trimTextExpressions(expressions) {
   return _trim(_trim(expressions.reverse()).reverse());
 }
 
+function hasBlock (expressions) {
+  return !!expressions.filter(function (expr) {
+    return expr.type === "blockBinding";
+  }).length;
+}
+
+function onlyTextAndBlocks (expressions) {
+  return expressions.every(function (expr) {
+    return expr.type === "blockBinding" || expr.type === "textNode";
+  });
+}
+
+
 }
 
 Start
@@ -88,7 +102,15 @@ DocType
     }
 
 ChildNodes
-  = children:(ElementNode/TextNode/BlockBinding/CommentNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); }
+  = children:(ElementNode/TextNode/BlockBinding/CommentNode)* { 
+    var children = trimTextExpressions(children);
+
+    if (children.length > 1 && hasBlock(children) && onlyTextAndBlocks(children)) {
+      return new ArrayExpression(new ParametersExpression([new CombinedBlockExpression(children)]));
+    } else {
+      return new ArrayExpression(new ParametersExpression(children));
+    }
+  }
 
 
 CommentNode

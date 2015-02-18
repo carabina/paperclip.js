@@ -25,15 +25,15 @@ describe(__filename + "#", function () {
   });
 
   it("maintains spaces between blocks", function () {
-    var ast = parser.parse("{{a}} {{b}}");
-    expect(ast.childNodes.expressions.expressions.length).to.be(3);
-    var ast = parser.parse("{{a}} {{b}} c");
-    expect(ast.childNodes.expressions.expressions.length).to.be(4);
+    var t = template("{{a}} {{b}}");
+    expect(t.view({a:1,b:2}).toString()).to.be("1 2");
+    var t = template("{{a}} {{b}} c");
+    expect(t.view({a:1,b:2}).toString()).to.be("1 2 c");
   });
 
   it("maintains whitespace if the space is a new line character", function () {
-    var ast = parser.parse("{{a}}\n\t{{a}}");
-    expect(ast.childNodes.expressions.expressions.length).to.be(3);
+    var t = template("{{a}}\n\t{{b}}");
+    expect(t.view({a:1,b:2}).toString()).to.be("1 2");
   });
 
   it("accepts many types of characters in the tag name", function () {
